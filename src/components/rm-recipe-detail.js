@@ -6,6 +6,8 @@ import { msg, str, updateWhenLocaleChanges } from '@lit/localize';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { acquire as acquireWakeLock, release as releaseWakeLock, isWakeLockSupported, onChange as onWakeLockChange } from '../services/wake-lock.js';
 
+import { parseAmount, scaleAmount } from '../services/ingredient-amount.js';
+
 const WAKE_LOCK_REASON = 'recipe-detail';
 
 // ---------------------------------------------------------------------------
@@ -101,8 +103,8 @@ const IMPERIAL_TO_METRIC = {
 
 function convertToMetric(amount, unit) {
   if (!amount || !unit) return null;
-  const num = parseFloat(amount);
-  if (isNaN(num)) return null;
+  const num = parseAmount(amount);
+  if (num === null) return null;
   const key = unit.toLowerCase().trim();
   const conv = IMPERIAL_TO_METRIC[key];
   if (!conv) return null;
@@ -285,9 +287,7 @@ class RmRecipeDetail extends LitElement {
   }
 
   _scaleAmount(amount) {
-    if (!amount || isNaN(parseFloat(amount))) return amount;
-    const scaled = parseFloat(amount) * this._servingMult;
-    return Number.isInteger(scaled) ? String(scaled) : scaled.toFixed(1).replace(/\.0$/, '');
+    return scaleAmount(amount, this._servingMult);
   }
 
   // -- Actions ------------------------------------------------------------------
