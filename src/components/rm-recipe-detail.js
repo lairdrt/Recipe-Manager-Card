@@ -116,7 +116,9 @@ function convertToMetric(amount, unit) {
   if (resultUnit === 'ml' && result >= 1000) { result = result / 1000; resultUnit = 'L'; }
   // Round sensibly
   const rounded = result >= 10 ? Math.round(result) : Math.round(result * 10) / 10;
-  return { amount: String(rounded), unit: resultUnit };
+  // Avoid displaying a nonzero ingredient quantity as zero after rounding.
+  const displayAmount = rounded === 0 && result !== 0 ? Number(result.toPrecision(3)) : rounded;
+  return { amount: String(displayAmount), unit: resultUnit };
 }
 
 class RmRecipeDetail extends LitElement {
