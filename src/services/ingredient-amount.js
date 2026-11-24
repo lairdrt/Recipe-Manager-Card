@@ -17,7 +17,7 @@ export function parseAmount(amount) {
     const result = Number(fraction[1] || 0) + Number(fraction[2]) / denominator;
     return denominator && Number.isFinite(result) ? result : null;
   }
-  if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(value)) return null;
+  if (!/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value)) return null;
   const result = Number(value);
   return Number.isFinite(result) ? result : null;
 }
